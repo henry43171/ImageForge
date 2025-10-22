@@ -2,9 +2,8 @@ import os
 from typing import List, Tuple
 from PIL import Image
 
-# -------------------------
-# 1) 只負責取得檔案清單（路徑）
-# -------------------------
+
+# 取得檔案清單
 def list_image_files(input_folder: str, exts: List[str] = None) -> List[str]:
     """
     回傳資料夾內所有檔案的完整路徑（可選副檔名過濾）
@@ -24,28 +23,38 @@ def list_image_files(input_folder: str, exts: List[str] = None) -> List[str]:
     return files
 
 
-# -------------------------
-# 2) 只負責把路徑清單轉成灰階影像物件（不存檔）
-# -------------------------
-def load_paths_to_grayscale(paths: List[str]) -> List[Tuple[str, Image.Image]]:
+# 路徑清單轉成灰階影像物件
+def quantize_gray(value: int, levels: int) -> int:
+    """將單個灰階像素量化到指定層數"""
+    if levels <= 1:
+        return 0
+    elif levels == 2:
+        return 0 if value < 128 else 255
+    else:
+        factor = 256 // levels
+        return int(value / 256 * levels) * factor
+
+
+def quantize_images(paths: List[str], levels: int = 5) -> List[Tuple[str, Image.Image]]:
     """
-    接收 image path 的 list，回傳 [(path, gray_image), ...]
-    - 這裡會把 Image 物件複製一份再回傳，避免 with 關閉造成的問題
+    接收圖片路徑清單，進行灰階量化（不存檔）
+    - 回傳格式: [(path, quantized_image), ...]
     """
     results = []
     for p in paths:
         try:
             with Image.open(p) as img:
-                gray = img.convert("L")
-                results.append((p, gray.copy()))
+                # 轉灰階
+                img_gray = img.convert("L")
+                # 灰階量化
+                img_quant = img_gray.point(lambda x: quantize_gray(x, levels))
+                results.append((p, img_quant.copy()))
         except Exception as e:
-            print(f"[ERROR] 無法讀取或轉換 {p}: {e}")
+            print(f"[ERROR] 無法處理 {p}: {e}")
     return results
 
 
-# -------------------------
-# 3) 只負責儲存處理後的影像
-# -------------------------
+# 儲存處理後的影像
 def save_images(images: List[Tuple[str, Image.Image]], input_folder: str, output_folder: str):
     """
     將 [(path, image), ...] 儲存到 output_folder。
@@ -75,13 +84,11 @@ if __name__ == "__main__":
     # 讀取圖片
     paths = list_image_files(input_folder)
     print(f"找到 {len(paths)} 張圖片")
-    print(f"全圖片路徑:\n {paths}")
+    print(f"開始圖片轉換")
 
     # 功能(轉灰階)
-    gray_images = load_paths_to_grayscale(paths)
-    for path, img in gray_images:
-        print(f"已載入灰階：{path} (size={img.size})")
-    print(f"gray_images:\n {gray_images}")
-    
+    quantized_images = quantize_images(paths, levels=2)
+
     # 存檔
-    save_images(gray_images, input_folder, output_folder)
+    save_images(quantized_images, input_folder, output_folder)
+    print(f"圖片轉換結束")
