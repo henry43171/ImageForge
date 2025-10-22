@@ -1,19 +1,26 @@
 # main.py
 import load_img
 import grey_quantize
+import compress
 
 def main():
     # 設定參數
     input_folder = "input_img"
     output_folder = "output_img"
+    mode_status = "compress"
 
     # 讀取圖片
     paths = load_img.list_image_files(input_folder)
     print(f"找到 {len(paths)} 張圖片")
     print(f"開始圖片轉換")
 
-    # 功能(轉灰階)
-    quantized_images = grey_quantize.quantize_images(paths, levels=2)
+    # 功能
+    if mode_status == "grey": 
+        # 轉灰階
+        quantized_images = grey_quantize.quantize_images(paths, levels=2)
+    elif mode_status == "compress":
+        # 壓縮
+        quantized_images = compress.compress_images_in_folder(input_folder, strength=4)
 
     # 存檔
     load_img.save_images(quantized_images, input_folder, output_folder)
