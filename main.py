@@ -2,6 +2,7 @@
 import load_img
 import grey_quantize
 import compress
+import convert_icon
 
 def main():
     # 設定參數
@@ -18,13 +19,21 @@ def main():
     if mode_status == "grey": 
         # 轉灰階
         quantized_images = grey_quantize.quantize_images(paths, levels=2)
+        # 存檔
+        load_img.save_images(quantized_images, input_folder, output_folder)
+        print(f"圖片轉換結束")
+
     elif mode_status == "compress":
         # 壓縮
         quantized_images = compress.compress_images_in_folder(input_folder, strength=4)
-
-    # 存檔
-    load_img.save_images(quantized_images, input_folder, output_folder)
-    print(f"圖片轉換結束")
+        # 存檔
+        load_img.save_images(quantized_images, input_folder, output_folder)
+        print(f"圖片轉換結束")
+    
+    elif mode_status == "icon":
+        # 轉icon
+        quantized_images = convert_icon.convert_images_to_icon(input_folder, output_folder, icon_sizes=[(32, 32)])
+    
 
 
 if __name__ == "__main__":
