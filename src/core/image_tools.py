@@ -97,13 +97,13 @@ class ImageTools:
 
     def batch_rename(self, input_folder: str, prefix: str = "", start_index: int = 1, pad_digits: int = 5) -> List[Tuple[str, Image.Image]]:
         """
-        批量改名資料夾內的圖片，檔案格式不變
+        批量產生改名前綴 + 流水號的圖片清單，但不改動原始檔案
         - prefix: 檔名前綴
         - start_index: 流水號起始值
         - pad_digits: 流水號位數，例如 4 -> 0001, 0002 ...
         
         Returns:
-            List[Tuple[新檔名完整路徑, Image.Image]]
+            List[Tuple[模擬新檔名完整路徑, Image.Image]]
         """
         results = []
         files = [f for f in os.listdir(input_folder) if os.path.isfile(os.path.join(input_folder, f))]
@@ -112,16 +112,17 @@ class ImageTools:
         index = start_index
         for fname in files:
             old_path = os.path.join(input_folder, fname)
-            name, ext = os.path.splitext(fname)
+            _, ext = os.path.splitext(fname)
+            # 只生成新名稱，路徑暫存於 results，不影響原檔案
             new_name = f"{prefix}{str(index).zfill(pad_digits)}{ext}"
             new_path = os.path.join(input_folder, new_name)
 
             try:
-                os.rename(old_path, new_path)
-                with Image.open(new_path) as img:
+                with Image.open(old_path) as img:
                     results.append((new_path, img.copy()))
                 index += 1
             except Exception as e:
-                print(f"[ERROR] 無法改名 {fname}: {e}")
+                print(f"[ERROR] 無法處理 {fname}: {e}")
 
         return results
+

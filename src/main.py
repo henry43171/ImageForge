@@ -12,7 +12,7 @@ def main():
     # === 參數設定 ===
     input_folder = "input_img"
     output_folder = "output_img"
-    mode_status = "convert"  # grey / compress / rename / icon / convert
+    mode_status = "rename"  # grey / compress / rename / icon / convert
 
     # === 讀取圖片 ===
     paths = loader.list_image_files(input_folder)
@@ -32,7 +32,7 @@ def main():
 
     elif mode_status == "rename":
         print("[INFO] 開始批量改名...")
-        results = tools.batch_rename(input_folder, prefix="img_", start_index=1)
+        results = tools.batch_rename(input_folder, prefix="new_name_", pad_digits = 6)
         loader.save_images(results, input_folder, output_folder)
 
     elif mode_status == "icon":
