@@ -1,18 +1,26 @@
 # src/main.py
+import json
 from src.core.file_loader import FileLoader
 from src.core.image_tools import ImageTools
 from src.core.converter import ImageConverter 
+
+
+def load_config(path="config/config.json"):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 
 def main():
     # === 初始化 ===
     loader = FileLoader()
     tools = ImageTools()
-    converter = ImageConverter()  # 若有轉檔相關功能時啟用
+    converter = ImageConverter()
 
-    # === 參數設定 ===
-    input_folder = "input_img"
-    output_folder = "output_img"
-    mode_status = "rename"  # grey / compress / rename / icon / convert
+    # === 讀取參數 ===
+    config = load_config()
+    input_folder = config.get("input_img_folder", "input_img")
+    output_folder = config.get("output_img_folder", "output_img")
+    mode_status = config.get("mode_status", ["grey"])[0]
 
     # === 讀取圖片 ===
     paths = loader.list_image_files(input_folder)
