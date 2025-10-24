@@ -20,7 +20,7 @@ def main():
     config = load_config()
     input_folder = config.get("input_img_folder", "input_img")
     output_folder = config.get("output_img_folder", "output_img")
-    mode_status = config.get("mode_status", ["grey"])[0]
+    mode_status = config.get("mode_status", ["grey"])[2]
 
     # === 讀取圖片 ===
     paths = loader.list_image_files(input_folder)
@@ -29,19 +29,15 @@ def main():
     # === 模式分支 ===
     if mode_status == "grey":
         print("[INFO] 開始灰階量化...")
-        results = tools.quantize_images(paths, levels=4)
-        print(results)
-        loader.save_images(results, input_folder, output_folder)
+        tools.quantize_images(paths, output_folder, levels=4)
 
     elif mode_status == "compress":
         print("[INFO] 開始壓縮圖片...")
-        results = tools.compress_images_in_folder(input_folder, strength=5)
-        loader.save_images(results, input_folder, output_folder)
+        tools.compress_images_in_folder(input_folder, output_folder, strength=5)
 
     elif mode_status == "rename":
         print("[INFO] 開始批量改名...")
-        results = tools.batch_rename(input_folder, prefix="new_name_", pad_digits = 6)
-        loader.save_images(results, input_folder, output_folder)
+        tools.batch_rename(input_folder, output_folder, prefix="new_name_", pad_digits = 6)
 
     elif mode_status == "icon":
         print("[INFO] 開始轉換成 icon...")
@@ -50,7 +46,6 @@ def main():
     elif mode_status == "convert":
         print("[INFO] 開始格式轉換...")
         converter.convert_images_in_folder(input_folder, output_folder, "JPG")
-
 
     else:
         print(f"[ERROR] 未知模式：{mode_status}")
