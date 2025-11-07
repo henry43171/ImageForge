@@ -14,7 +14,7 @@ class ImageProcessorApp(ctk.CTk):
         # === 主題設定 ===
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("dark-blue")
-        self.title("🧩 Image Processor GUI")
+        self.title("Image Forge")
         self.geometry("760x580")
         self.resizable(False, False)
 
@@ -35,7 +35,7 @@ class ImageProcessorApp(ctk.CTk):
         self.create_widgets()
 
     def create_widgets(self):
-        ctk.CTkLabel(self, text="🧩 Image Processing Tool", font=("Segoe UI", 20, "bold")).pack(pady=10)
+        ctk.CTkLabel(self, text="Image Forge", font=("Segoe UI", 20, "bold")).pack(pady=10)
 
         # 模式選單
         frame_mode = ctk.CTkFrame(self)
@@ -90,12 +90,16 @@ class ImageProcessorApp(ctk.CTk):
             widget.destroy()
         self.param_entries.clear()
 
+        # 保持 key 名稱乾淨（程式內使用），但加上顯示用的描述文字
         params_by_mode = {
-            "grey": {"levels": 4},
-            "compress": {"strength": 5},
-            "rename": {"prefix": "new_name_", "pad_digits": 6},
-            "icon": {"icon_sizes": "(32,32)"},
-            "convert": {"format": "JPG"},
+            "grey": {"levels": (4, "levels (2–10)")},
+            "compress": {"strength": (5, "strength (1–10)")},
+            "rename": {
+                "prefix": ("new_name_", "prefix"),
+                "pad_digits": (6, "pad_digits")
+            },
+            "icon": {"icon_sizes": ("(32,32)", "icon_sizes (ex: (32,32))")},
+            "convert": {"format": ("JPG", "format (JPG / PNG / WEBP)")},
         }
 
         params = params_by_mode.get(mode, {})
@@ -104,14 +108,15 @@ class ImageProcessorApp(ctk.CTk):
             ctk.CTkLabel(self.param_container, text="此模式無需參數設定").pack(pady=5)
             return
 
-        for i, (key, default) in enumerate(params.items()):
+        for key, (default, display_name) in params.items():
             frame = ctk.CTkFrame(self.param_container)
             frame.pack(fill="x", pady=3)
-            ctk.CTkLabel(frame, text=f"{key}：", width=120, anchor="e").pack(side="left", padx=5)
+            ctk.CTkLabel(frame, text=f"{display_name}：", width=160, anchor="e").pack(side="left", padx=5)
             entry = ctk.CTkEntry(frame, width=200)
             entry.insert(0, str(default))
             entry.pack(side="left", padx=5)
             self.param_entries[key] = entry
+
 
     def on_mode_change(self, mode):
         self.populate_params(mode)
