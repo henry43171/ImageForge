@@ -1,7 +1,10 @@
-import customtkinter as ctk
-import threading
+# src/main_gui.py
 import os
+import threading
 from tkinter import filedialog, messagebox
+
+import customtkinter as ctk
+
 from src.core.file_loader import FileLoader
 from src.core.image_tools import ImageTools
 from src.core.converter import ImageConverter
@@ -33,6 +36,7 @@ class ImageProcessorApp(ctk.CTk):
 
         # === 介面建立 ===
         self.create_widgets()
+
 
     def create_widgets(self):
         ctk.CTkLabel(self, text="Image Forge", font=("Segoe UI", 20, "bold")).pack(pady=10)
@@ -70,6 +74,7 @@ class ImageProcessorApp(ctk.CTk):
         self.log_box.pack(padx=20, pady=10)
         self.log("[INFO] 系統初始化完成。")
 
+
     # -----------------------
     # 📂 資料夾選擇
     # -----------------------
@@ -80,6 +85,7 @@ class ImageProcessorApp(ctk.CTk):
         ctk.CTkEntry(frame, textvariable=var, width=420).pack(side="left", padx=5)
         ctk.CTkButton(frame, text="選擇", width=80,
                       command=lambda: var.set(filedialog.askdirectory() or var.get())).pack(side="left", padx=5)
+
 
     # -----------------------
     # 🔧 動態參數區域
