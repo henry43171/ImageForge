@@ -22,7 +22,7 @@ pip install customtkinter
 
 2. 執行主程式：
 ~~~bash
-python src/main_gui.py
+python -m src.main_gui
 ~~~
 
 3. 或使用 PyInstaller 打包成單一可執行檔：
@@ -44,4 +44,5 @@ python src/main_gui.py
 ## 注意事項
 - 確保輸入資料夾存在且包含有效圖片。
 - 輸出資料夾會自動生成或覆寫同名檔案，請小心操作。
+- main.py只是無GUI版本的接口，不影響整體執行。
 
