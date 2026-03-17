@@ -78,12 +78,17 @@ class ImageTools:
         for p in paths:
             try:
                 with Image.open(p) as img:
-                    # 轉灰階
-                    img_gray = img.convert("L")
+                    # 🔥 關鍵：轉 HSV，取 V (亮度)
+                    img_hsv = img.convert("HSV")
+                    h, s, v = img_hsv.split()
+
+                    # 用 V 當作灰階（已經去除固有色）
+                    img_gray = v
+
                     # 灰階量化
                     img_quant = img_gray.point(lambda x: self.quantize_gray(x, levels))
 
-                    # 儲存到 output_folder，保留原始檔名
+                    # 儲存
                     fname = os.path.basename(p)
                     save_path = os.path.join(output_folder, fname)
                     img_quant.save(save_path)
